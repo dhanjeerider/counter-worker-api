@@ -85,10 +85,25 @@ export function renderPage(path) {
     "referrer-policy": "strict-origin-when-cross-origin",
     "content-security-policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
   });
-  const pageWithScript = page.replace("</body>", '<script>
-document.querySelectorAll("[data-copy]").forEach(function(button){button.addEventListener("click",async function(){try{await navigator.clipboard.writeText(button.getAttribute("data-copy").replace(/&quot;/g, "\""));button.textContent="Copied";setTimeout(function(){button.textContent="Copy"},1200)}catch(e){button.textContent="Copy unavailable"}})});
-var routeSelect=document.getElementById("tester-route");
-if(routeSelect){var bodyField=document.getElementById("tester-body");routeSelect.addEventListener("change",function(){var selected=routeSelect.options[routeSelect.selectedIndex];bodyField.value=selected.dataset.body?JSON.stringify(JSON.parse(selected.dataset.body),null,2):"{}"});document.getElementById("run-request").addEventListener("click",async function(){var selected=routeSelect.options[routeSelect.selectedIndex];var method=selected.dataset.method;var path=selected.value;var key=document.getElementById("tester-key").value;var status=document.getElementById("tester-status");var output=document.getElementById("tester-output");var headers={};if(key)headers["x-api-key"]=key;if(method!=="GET"){headers["content-type"]="application/json";try{JSON.parse(bodyField.value||"{}")}catch(e){status.textContent="Invalid JSON body";return}}status.textContent="Sending "+method+" request…";output.textContent="Loading…";try{var response=await fetch(path,{method:method,headers:headers,body:method==="GET"?undefined:(bodyField.value||"{}")});var text=await response.text();var parsed;try{parsed=JSON.parse(text);text=JSON.stringify(parsed,null,2)}catch(e){}status.textContent=response.status+" "+response.statusText;output.textContent=text}catch(e){status.textContent="Request failed";output.textContent=String(e)}})}
-</script></body>');
+  const inlineScript = [
+    "document.querySelectorAll('[data-copy]').forEach(function(button){",
+    "  button.addEventListener('click', async function(){",
+    "    try { await navigator.clipboard.writeText(button.getAttribute('data-copy')); button.textContent='Copied'; setTimeout(function(){button.textContent='Copy'},1200); } catch(e) { button.textContent='Copy unavailable'; }",
+    "  });",
+    "});",
+    "var routeSelect=document.getElementById('tester-route');",
+    "if(routeSelect){",
+    "  var bodyField=document.getElementById('tester-body');",
+    "  routeSelect.addEventListener('change',function(){var selected=routeSelect.options[routeSelect.selectedIndex];bodyField.value=selected.dataset.body?JSON.stringify(JSON.parse(selected.dataset.body),null,2):'{}';});",
+    "  document.getElementById('run-request').addEventListener('click',async function(){",
+    "    var selected=routeSelect.options[routeSelect.selectedIndex];var method=selected.dataset.method;var path=selected.value;var key=document.getElementById('tester-key').value;var status=document.getElementById('tester-status');var output=document.getElementById('tester-output');var headers={};",
+    "    if(key)headers['x-api-key']=key;",
+    "    if(method!=='GET'){headers['content-type']='application/json';try{JSON.parse(bodyField.value||'{}');}catch(e){status.textContent='Invalid JSON body';return;}}",
+    "    status.textContent='Sending '+method+' request…';output.textContent='Loading…';",
+    "    try{var response=await fetch(path,{method:method,headers:headers,body:method==='GET'?undefined:(bodyField.value||'{}')});var text=await response.text();try{text=JSON.stringify(JSON.parse(text),null,2);}catch(e){}status.textContent=response.status+' '+response.statusText;output.textContent=text;}catch(e){status.textContent='Request failed';output.textContent=String(e);}",
+    "  });",
+    "}"
+  ].join("\n");
+  const pageWithScript = page.replace("</body>", "<script>" + inlineScript + "</script></body>");
   return new Response(pageWithScript, { status: 200, headers });
 }
