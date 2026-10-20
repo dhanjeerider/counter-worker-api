@@ -1,13 +1,25 @@
 openapi: 3.1.0
 info:
   title: Counter Worker API
-  version: 1.0.0
+  version: 1.1.0
   description: Lightweight counter REST API on Cloudflare Workers and D1.
 servers:
   - url: https://YOUR-WORKER.workers.dev
 security:
   - ApiKeyAuth: []
 paths:
+  /api:
+    get:
+      security: []
+      summary: API metadata and route discovery
+      responses:
+        '200': { description: API metadata and supported routes }
+  /api/routes:
+    get:
+      security: []
+      summary: List every supported endpoint as JSON
+      responses:
+        '200': { description: Route catalogue }
   /health:
     get:
       security: []
