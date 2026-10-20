@@ -1,0 +1,140 @@
+openapi: 3.1.0
+info:
+  title: Counter Worker API
+  version: 1.0.0
+  description: Lightweight counter REST API on Cloudflare Workers and D1.
+servers:
+  - url: https://YOUR-WORKER.workers.dev
+security:
+  - ApiKeyAuth: []
+paths:
+  /health:
+    get:
+      security: []
+      summary: Health check
+      responses:
+        '200': { description: Worker is healthy }
+  /api/counter:
+    get:
+      security: []
+      summary: Read the default counter
+      responses:
+        '200': { description: Counter value }
+  /api/counter/increment:
+    post:
+      summary: Increment the default counter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                by: { type: integer, minimum: 1, maximum: 1000000000, default: 1 }
+      responses:
+        '200': { description: Updated counter }
+        '401': { description: Invalid or missing API key }
+  /api/counter/decrement:
+    post:
+      summary: Decrement the default counter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                by: { type: integer, minimum: 1, maximum: 1000000000, default: 1 }
+      responses:
+        '200': { description: Updated counter }
+  /api/counter/reset:
+    post:
+      summary: Reset the default counter
+      responses:
+        '200': { description: Reset counter }
+  /api/counter/set:
+    post:
+      summary: Set the default counter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [value]
+              properties:
+                value: { type: integer }
+      responses:
+        '200': { description: Updated counter }
+  /api/counters:
+    get:
+      security: []
+      summary: List counters
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100 }
+      responses:
+        '200': { description: Counter list }
+  /api/counters/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, pattern: '^[a-zA-Z0-9_-]{1,64}$' }
+    get:
+      security: []
+      summary: Read a named counter
+      responses:
+        '200': { description: Counter value }
+    put:
+      summary: Set a named counter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [value]
+              properties:
+                value: { type: integer }
+      responses:
+        '200': { description: Updated counter }
+    delete:
+      summary: Delete a named counter
+      responses:
+        '200': { description: Delete result }
+  /api/counters/{id}/increment:
+    post:
+      summary: Increment a named counter
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: '^[a-zA-Z0-9_-]{1,64}$' }
+      responses:
+        '200': { description: Updated counter }
+  /api/counters/{id}/decrement:
+    post:
+      summary: Decrement a named counter
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: '^[a-zA-Z0-9_-]{1,64}$' }
+      responses:
+        '200': { description: Updated counter }
+  /api/counters/{id}/reset:
+    post:
+      summary: Reset a named counter
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: '^[a-zA-Z0-9_-]{1,64}$' }
+      responses:
+        '200': { description: Reset counter }
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
