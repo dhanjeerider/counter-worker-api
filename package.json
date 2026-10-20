@@ -1,0 +1,18 @@
+{
+  "name": "counter-worker-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A lightweight counter REST API built with Cloudflare Workers and D1 SQLite.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create counter-worker-db",
+    "db:migrate:local": "wrangler d1 migrations apply counter-worker-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply counter-worker-db --remote",
+    "types": "wrangler types",
+    "test": "node --test"
+  },
+  "devDependencies": { "wrangler": "^4.0.0" }
+}
