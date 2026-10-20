@@ -4,6 +4,6 @@ compatibility_date = "2026-10-20"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "counter-worker-db"
-database_id = "PASTE_YOUR_D1_DATABASE_ID"
+database_name = "counter-worker-api"
+database_id = "fb8a2bd5-299c-42a1-8a56-314f51a0aabf"
 migrations_dir = "migrations"
