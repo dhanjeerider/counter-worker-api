@@ -1,3 +1,5 @@
+import { getApiRoutes, renderPage } from "./site.js";
+
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store"
@@ -97,11 +99,18 @@ export default {
   async fetch(request, env) {
     const headers = makeHeaders(request, env);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers });
-    if (!env.DB) return failure("DATABASE_NOT_CONFIGURED", "The D1 database binding is missing.", 503, headers);
 
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
     const method = request.method.toUpperCase();
+
+    if (method === "GET" && (path === "/" || path === "/docs" || path === "/routes")) {
+      return renderPage(path);
+    }
+    if (method === "GET" && (path === "/api" || path === "/api/routes")) {
+      return success(getApiRoutes(url.origin), 200, headers);
+    }
+    if (!env.DB) return failure("DATABASE_NOT_CONFIGURED", "The D1 database binding is missing.", 503, headers);
 
     if (path === "/health" && method === "GET") {
       return success({ status: "ok", service: "counter-worker-api" }, 200, headers);
