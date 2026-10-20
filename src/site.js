@@ -3,23 +3,23 @@ export const API_ROUTES = [
   { method: "GET", path: "/api", group: "Discovery", description: "Get API metadata, base URL and route catalogue.", auth: "Public" },
   { method: "GET", path: "/api/routes", group: "Discovery", description: "Return every supported endpoint as JSON.", auth: "Public" },
   { method: "GET", path: "/api/counter", group: "Default counter", description: "Read the default counter value.", auth: "Public" },
-  { method: "POST", path: "/api/counter/increment", group: "Default counter", description: "Atomically increase the default counter.", auth: "API key", body: '{ "by": 1 }' },
-  { method: "POST", path: "/api/counter/decrement", group: "Default counter", description: "Atomically decrease the default counter.", auth: "API key", body: '{ "by": 1 }' },
-  { method: "POST", path: "/api/counter/reset", group: "Default counter", description: "Set the default counter to zero.", auth: "API key", body: "{}" },
-  { method: "POST", path: "/api/counter/set", group: "Default counter", description: "Set the default counter to an integer value.", auth: "API key", body: '{ "value": 25 }' },
+  { method: "POST", path: "/api/counter/increment", group: "Default counter", description: "Atomically increase the default counter.", auth: "Conditional API key", body: '{ "by": 1 }' },
+  { method: "POST", path: "/api/counter/decrement", group: "Default counter", description: "Atomically decrease the default counter.", auth: "Conditional API key", body: '{ "by": 1 }' },
+  { method: "POST", path: "/api/counter/reset", group: "Default counter", description: "Set the default counter to zero.", auth: "Conditional API key", body: "{}" },
+  { method: "POST", path: "/api/counter/set", group: "Default counter", description: "Set the default counter to an integer value.", auth: "Conditional API key", body: '{ "value": 25 }' },
   { method: "GET", path: "/api/counters", group: "Named counters", description: "List counters. Supports ?limit=1–100.", auth: "Public" },
   { method: "GET", path: "/api/counters/:id", group: "Named counters", description: "Read a named counter. Missing counters return zero.", auth: "Public" },
-  { method: "PUT", path: "/api/counters/:id", group: "Named counters", description: "Create or replace a named counter value.", auth: "API key", body: '{ "value": 25 }' },
-  { method: "DELETE", path: "/api/counters/:id", group: "Named counters", description: "Delete a named counter.", auth: "API key" },
-  { method: "POST", path: "/api/counters/:id/increment", group: "Named counters", description: "Atomically increase a named counter.", auth: "API key", body: '{ "by": 1 }' },
-  { method: "POST", path: "/api/counters/:id/decrement", group: "Named counters", description: "Atomically decrease a named counter.", auth: "API key", body: '{ "by": 1 }' },
-  { method: "POST", path: "/api/counters/:id/reset", group: "Named counters", description: "Set a named counter to zero.", auth: "API key", body: "{}" }
+  { method: "PUT", path: "/api/counters/:id", group: "Named counters", description: "Create or replace a named counter value.", auth: "Conditional API key", body: '{ "value": 25 }' },
+  { method: "DELETE", path: "/api/counters/:id", group: "Named counters", description: "Delete a named counter.", auth: "Conditional API key" },
+  { method: "POST", path: "/api/counters/:id/increment", group: "Named counters", description: "Atomically increase a named counter.", auth: "Conditional API key", body: '{ "by": 1 }' },
+  { method: "POST", path: "/api/counters/:id/decrement", group: "Named counters", description: "Atomically decrease a named counter.", auth: "Conditional API key", body: '{ "by": 1 }' },
+  { method: "POST", path: "/api/counters/:id/reset", group: "Named counters", description: "Set a named counter to zero.", auth: "Conditional API key", body: "{}" }
 ];
 
 export function getApiRoutes(baseUrl = "") {
   return {
     name: "Counter Worker API",
-    version: "1.0.0",
+    version: "1.1.0",
     description: "Persistent counter REST API powered by Cloudflare Workers and D1.",
     base_url: baseUrl,
     authentication: {
