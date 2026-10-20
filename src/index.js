@@ -110,11 +110,10 @@ export default {
     if (method === "GET" && (path === "/api" || path === "/api/routes")) {
       return success(getApiRoutes(url.origin), 200, headers);
     }
-    if (!env.DB) return failure("DATABASE_NOT_CONFIGURED", "The D1 database binding is missing.", 503, headers);
-
     if (path === "/health" && method === "GET") {
-      return success({ status: "ok", service: "counter-worker-api" }, 200, headers);
+      return success({ status: "ok", service: "counter-worker-api", database_configured: Boolean(env.DB) }, 200, headers);
     }
+    if (!env.DB) return failure("DATABASE_NOT_CONFIGURED", "The D1 database binding is missing.", 503, headers);
     if (path === "/api/counter" && method === "GET") {
       try {
         const row = await getCounter(env.DB, DEFAULT_COUNTER_ID);
