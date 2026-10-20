@@ -93,3 +93,22 @@ test("invalid increment values are rejected", async () => {
   assert.equal(response.status, 400);
   assert.equal(result.error.code, "INVALID_AMOUNT");
 });
+
+
+test("landing, docs and routes pages are served without a database binding", async () => {
+  for (const path of ["/", "/docs", "/routes"]) {
+    const response = await worker.fetch(makeRequest(path, "GET", undefined, null), {});
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /text\/html/);
+    assert.match(html, /Counter API/);
+  }
+});
+
+test("API discovery returns the supported route catalogue without a database binding", async () => {
+  const response = await worker.fetch(makeRequest("/api/routes", "GET", undefined, null), {});
+  const result = await read(response);
+  assert.equal(response.status, 200);
+  assert.equal(result.data.name, "Counter Worker API");
+  assert.ok(result.data.routes.some(route => route.path === "/api/counter/increment"));
+});
